@@ -1,0 +1,8 @@
+[build]
+  functions = "functions"
+  publish = "."
+
+[[redirects]]
+  from = "/calendar"
+  to = "/.netlify/functions/calendar-proxy"
+  status = 200
