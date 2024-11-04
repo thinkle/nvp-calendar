@@ -100,9 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Clear existing table rows except the header
         const table = document.getElementById("events-table");
-        const rows = table.getElementsByTagName("tr");
-        const rowsArray = Array.from(rows);
-        rowsArray.slice(1).forEach((row) => table.removeChild(row));
+        const tbody = table.querySelector("tbody");
+        tbody.innerHTML = "";        
 
         // Check if there are events to display
         if (events.length === 0) {
@@ -112,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
           cell.textContent = "No events available.";
           cell.style.textAlign = "center";
           row.appendChild(cell);
-          table.appendChild(row);
+          tbody.appendChild(row);
           pageInfo.textContent = "";
           prevButton.disabled = true;
           nextButton.disabled = true;
@@ -162,13 +161,14 @@ document.addEventListener("DOMContentLoaded", function () {
           descCell.className = "desc";
           descCell.textContent = description;
           if (event.description) {
-            let descDiv = document.createElement('div');
+            let descDiv = document.createElement("div");
             descDiv.innerHTML = event.description;
-            descDiv.classList.add('detail');
+            descDiv.classList.add("detail");
             descCell.appendChild(descDiv);
           }
           row.appendChild(descCell);
 
+          // Route cell
           // Route cell
           const routeCell = document.createElement("td");
           routeCell.className = "route";
@@ -178,23 +178,25 @@ document.addEventListener("DOMContentLoaded", function () {
             link.href = routeLink;
             link.target = "_blank";
             link.textContent = "Route";
+            link.className = "route-link"; // Add a class for styling
+            link.setAttribute("data-tooltip", "View route on Ride with GPS"); // Add tooltip text
             routeCell.appendChild(link);
           } else {
             routeCell.textContent = "-";
           }
 
-          row.appendChild(routeCell);
+          row.appendChild(routeCell);          
 
           // Add click event listener to the row to show full description
           row.addEventListener("click", function () {
             row.classList.toggle("show-description");
-            console.log('Row clicked',event)
+            console.log("Row clicked", event);
           });
 
           // Add hover effect to indicate clickability
           row.style.cursor = "pointer";
 
-          table.appendChild(row);
+          tbody.appendChild(row);
         });
 
         updatePaginationControls();
