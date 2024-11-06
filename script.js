@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const description = event.description || "";
 
         // Use a regular expression to find ridewithgps links
-        const rideWithGpsRegex = /https?:\/\/ridewithgps\.com\/routes\/\d+/i;
+        const rideWithGpsRegex = /https?:\/\/ridewithgps\.com\/[^"'<\s]*/i;
         const rideWithGpsMatch = description.match(rideWithGpsRegex);
         const routeLink = rideWithGpsMatch ? rideWithGpsMatch[0] : null;
 
