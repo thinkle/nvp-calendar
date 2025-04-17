@@ -14,25 +14,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
       console.log(`Total vevents fetched: ${vevents.length}`);
 
+      let today = new Date();
+      let stopRecurringAfter = today.getTime() + 60 * 24 * 60 * 60 * 1000; // 60 days from now
+      let stopRecurringBefore = today.getTime() - 60 * 24 * 60 * 60 * 1000; // 60 days before now
+
       // Extract and process event details
-      // Extract and process event details
-      let events = vevents.map((vevent) => {
+      let events = vevents.flatMap((vevent) => {
         const event = new ICAL.Event(vevent);
-        const description = event.description || "";
 
-        // Use a regular expression to find ridewithgps links
-        const rideWithGpsRegex = /https?:\/\/ridewithgps\.com\/[^"'<\s]*/i;
-        const rideWithGpsMatch = description.match(rideWithGpsRegex);
-        const routeLink = rideWithGpsMatch ? rideWithGpsMatch[0] : null;
+        if (event.isRecurring()) {
+          // Handle recurring events
+          const recurExpansion = new ICAL.RecurExpansion({
+            component: vevent,
+            dtstart: event.startDate,
+          });
 
-        return {
-          summary: event.summary,
-          description: description,
-          location: event.location,
-          startDate: event.startDate.toJSDate(),
-          endDate: event.endDate.toJSDate(),
-          routeLink: routeLink,
-        };
+          const occurrences = [];
+          while (recurExpansion.next()) {
+            const occurrenceDate = recurExpansion.last.toJSDate().getTime();
+
+            // Only include occurrences within the specified window
+            if (occurrenceDate >= stopRecurringBefore && occurrenceDate <= stopRecurringAfter) {
+              occurrences.push({
+                summary: event.summary,
+                description: event.description || "",
+                location: event.location,
+                startDate: recurExpansion.last.toJSDate(),
+                endDate: new Date(
+                  recurExpansion.last.toJSDate().getTime() +
+                  (event.endDate.toJSDate().getTime() - event.startDate.toJSDate().getTime())
+                ),
+                routeLink: (event.description || "").match(/https?:\/\/ridewithgps\.com\/[^"'<\s]*/i)?.[0] || null,
+              });
+            }
+          }
+
+          return occurrences;
+        } else {
+          // Handle non-recurring events
+          const startDate = event.startDate.toJSDate().getTime();
+          if (startDate >= stopRecurringBefore && startDate <= stopRecurringAfter) {
+            return [
+              {
+                summary: event.summary,
+                description: event.description || "",
+                location: event.location,
+                startDate: event.startDate.toJSDate(),
+                endDate: event.endDate.toJSDate(),
+                routeLink: (event.description || "").match(/https?:\/\/ridewithgps\.com\/[^"'<\s]*/i)?.[0] || null,
+              },
+            ];
+          }
+          return [];
+        }
       });
 
       // Sort events by start date
@@ -101,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear existing table rows except the header
         const table = document.getElementById("events-table");
         const tbody = table.querySelector("tbody");
-        tbody.innerHTML = "";        
+        tbody.innerHTML = "";
 
         // Check if there are events to display
         if (events.length === 0) {
@@ -185,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
             routeCell.textContent = "-";
           }
 
-          row.appendChild(routeCell);          
+          row.appendChild(routeCell);
 
           // Add click event listener to the row to show full description
           row.addEventListener("click", function () {
