@@ -1,18 +1,18 @@
 /* Define color variables in the :root selector */
 :root {
-  --primary-color: #00704a;           /* Main theme color (e.g., green) */  
-  --text-color: #ffffff;              /* Text color on primary background */
-  --text-color-dark: #333333;         /* Default text color */
-  --background-color: #fafafa;        /* Background color for details */
-  --hover-background-color: #f1f1f1;  /* Background color on hover */
-  --border-color: #dddddd;            /* Border color for table and elements */
-  --link-color: rgba(22,121,191,1);              /* Link color (e.g., blue) */
-  --disabled-color: #cccccc;          /* Disabled button background color */
-  --disabled-text-color: #666666;     /* Disabled button text color */
+  --primary-color: #00704a; /* Main theme color (e.g., green) */
+  --text-color: #ffffff; /* Text color on primary background */
+  --text-color-dark: #333333; /* Default text color */
+  --background-color: #fafafa; /* Background color for details */
+  --hover-background-color: #f1f1f1; /* Background color on hover */
+  --border-color: #dddddd; /* Border color for table and elements */
+  --link-color: rgba(22, 121, 191, 1); /* Link color (e.g., blue) */
+  --disabled-color: #cccccc; /* Disabled button background color */
+  --disabled-text-color: #666666; /* Disabled button text color */
   --table-header-background: var(--primary-color); /* Table header background */
-  --table-header-text-color: var(--text-color);    /* Table header text color */
-  --button-text-color: var(--text-color);          /* Button text color */
-  --note-text-color: #555555;         /* Color for notes and instructions */
+  --table-header-text-color: var(--text-color); /* Table header text color */
+  --button-text-color: var(--text-color); /* Button text color */
+  --note-text-color: #555555; /* Color for notes and instructions */
 }
 
 /* Base table styling */
@@ -147,8 +147,6 @@ button:hover:not(:disabled) {
   filter: brightness(0.8);
 }
 
-
-
 /* Loading row styling */
 tr.loading td {
   text-align: center;
@@ -158,21 +156,25 @@ tr.loading td {
 
 /* Loader spinner */
 .loader {
-  border: 4px solid #f3f3f3;          /* Light grey border */
+  border: 4px solid #f3f3f3; /* Light grey border */
   border-top: 4px solid var(--link-color); /* Blue border on top */
-  border-radius: 50%;                 /* Rounded shape */
+  border-radius: 50%; /* Rounded shape */
   width: 24px;
   height: 24px;
   animation: spin 1s linear infinite; /* Spin animation */
   display: inline-block;
   vertical-align: middle;
-  margin-right: 10px;                 /* Space between spinner and text */
+  margin-right: 10px; /* Space between spinner and text */
 }
 
 /* Spin animation keyframes */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Tooltip container */
@@ -186,7 +188,7 @@ tr.loading td {
   content: attr(data-tooltip);
   position: absolute;
   bottom: -40px; /* Position the tooltip below the element */
-  right: 0;       /* Align tooltip to the left */
+  right: 0; /* Align tooltip to the left */
   background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
   color: #fff;
   padding: 6px 8px;
@@ -201,10 +203,10 @@ tr.loading td {
 
 /* Tooltip arrow */
 [data-tooltip]::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10px; /* Position the arrow below the element */
-  left: 10px;    /* Align arrow with tooltip */
+  left: 10px; /* Align arrow with tooltip */
   border-width: 5px;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
@@ -221,4 +223,16 @@ tr.loading td {
 [data-tooltip]:focus::before {
   opacity: 1;
   visibility: visible;
+}
+
+.route a {
+  display: block;
+  margin-bottom: 8px;
+}
+.route a:last-child {
+  margin-bottom: 0;
+}
+
+.detail {
+  cursor: default; /* Prevent pointer cursor on detail where we allow text selection */
 }

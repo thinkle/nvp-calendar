@@ -1,10 +1,9 @@
 <body>
   <!-- Include your stylesheet -->
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css" />
 
   <!-- Pagination and Controls -->
-  <div id="pagination">    
-
+  <div id="pagination">
     <!-- Pagination Controls -->
     <span id="page-info"></span>
 
@@ -12,7 +11,10 @@
     <button id="prev-page" disabled aria-label="Previous Page">
       <!-- Left Arrow SVG Icon -->
       <svg width="24" height="24" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z" />
+        <path
+          fill="currentColor"
+          d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z"
+        />
       </svg>
     </button>
 
@@ -20,17 +22,31 @@
     <button id="next-page" aria-label="Next Page">
       <!-- Right Arrow SVG Icon -->
       <svg width="24" height="24" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" />
+        <path
+          fill="currentColor"
+          d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"
+        />
       </svg>
     </button>
 
     <!-- Link to open the embedded Google Calendar in a new tab -->
-    <a target="_blank" href="https://calendar.google.com/calendar/u/0/embed?color=%23668CD9&src=92rldhsu09qgi7unrhjtq178no@group.calendar.google.com" aria-label="Open Google Calendar in New Tab"    
+    <a
+      target="_blank"
+      href="https://calendar.google.com/calendar/u/0/embed?color=%23668CD9&src=92rldhsu09qgi7unrhjtq178no@group.calendar.google.com"
+      aria-label="Open Google Calendar in New Tab"
       data-tooltip="Open calendar in Google Calendar"
     >
       <!-- Open in new window icon -->
-      <svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle;">
-        <path fill="currentColor" d="M14 3v2h3.59L13 9.59 14.41 11 19 6.41V10h2V3h-7zM5 5h7V3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7H5V5z" />
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        style="vertical-align: middle"
+      >
+        <path
+          fill="currentColor"
+          d="M14 3v2h3.59L13 9.59 14.41 11 19 6.41V10h2V3h-7zM5 5h7V3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7H5V5z"
+        />
       </svg>
     </a>
   </div>
@@ -49,20 +65,24 @@
       <!-- Event rows will be inserted here -->
       <tr class="loading">
         <td colspan="4">
-              <div class="loader"></div>
+          <div class="loader"></div>
 
-          Loading events from 
-          <a target="_blank" href="https://calendar.google.com/calendar/u/0/embed?color=%23668CD9&src=92rldhsu09qgi7unrhjtq178no@group.calendar.google.com" aria-label="Open Calendar in New Tab">
+          Loading events from
+          <a
+            target="_blank"
+            href="https://calendar.google.com/calendar/u/0/embed?color=%23668CD9&src=92rldhsu09qgi7unrhjtq178no@group.calendar.google.com"
+            aria-label="Open Calendar in New Tab"
+          >
             Google Calendar
           </a>
         </td>
       </tr>
-     </tbody>
+    </tbody>
   </table>
 
   <!-- Include ical.js library from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
-
+  <script src="./routeLinkExtractor.js"></script>
   <!-- Your custom JavaScript code -->
   <script src="./script.js"></script>
 </body>

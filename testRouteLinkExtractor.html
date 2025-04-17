@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Route Link Extractor</title>
+    <script src="routeLinkExtractor.js"></script>
+  </head>
+  <body>
+    <script>
+      // Test cases
+      const testCases = [
+        {
+          description: `
+            14.7 mile route https://ridewithgps.com/routes/42487857
+            23 mile route (flat) https://ridewithgps.com/routes/42487421
+          `,
+          expected: [
+            {
+              title: "14.7 mile route",
+              link: "https://ridewithgps.com/routes/42487857",
+            },
+            {
+              title: "23 mile route (flat)",
+              link: "https://ridewithgps.com/routes/42487421",
+            },
+          ],
+        },
+        {
+          description: `
+            https://ridewithgps.com/routes/42487857
+            https://ridewithgps.com/routes/42487421
+          `,
+          expected: [
+            { title: "Route", link: "https://ridewithgps.com/routes/42487857" },
+            { title: "Route", link: "https://ridewithgps.com/routes/42487421" },
+          ],
+        },
+        {
+          description: `
+            Title 1
+            https://ridewithgps.com/routes/42487857
+
+            Title 2
+            https://ridewithgps.com/routes/42487421
+
+            Title 3
+            https://ridewithgps.com/routes/46373870
+          `,
+          expected: [
+            {
+              title: "Title 1",
+              link: "https://ridewithgps.com/routes/42487857",
+            },
+            {
+              title: "Title 2",
+              link: "https://ridewithgps.com/routes/42487421",
+            },
+            {
+              title: "Title 3",
+              link: "https://ridewithgps.com/routes/46373870",
+            },
+          ],
+        },
+        {
+          description: ``,
+          expected: [],
+        },
+        {
+          description: `
+            Malformed link: https://ridewithgps
+            Valid link: https://ridewithgps.com/routes/42487857
+          `,
+          expected: [
+            {
+              title: "Route",
+              link: "https://ridewithgps.com/routes/42487857",
+            },
+          ],
+        },
+        {
+          description: `
+            14.7 mile route https://ridewithgps.com/routes/42487857
+            https://ridewithgps.com/routes/42487421
+          `,
+          expected: [
+            {
+              title: "14.7 mile route",
+              link: "https://ridewithgps.com/routes/42487857",
+            },
+            { title: "Route", link: "https://ridewithgps.com/routes/42487421" },
+          ],
+        },
+        {
+          description: `
+           
+event:
+https://ridewithgps.com/events/206827-n074-sunday-conditioning-rides-2023
+
+https://ridewithgps.com/routes/29551199
+https://ridewithgps.com/routes/29567008
+https://ridewithgps.com/routes/42091634
+
+Ride Leader: Judy Clawson, jhclawson@gmail.com
+`,
+          expected: [
+            {
+              title: "event",
+              link: "https://ridewithgps.com/events/206827-n074-sunday-conditioning-rides-2023",
+            },
+            { title: "Route", link: "https://ridewithgps.com/routes/29551199" },
+            { title: "Route", link: "https://ridewithgps.com/routes/29567008" },
+            { title: "Route", link: "https://ridewithgps.com/routes/42091634" },
+          ],
+        },
+      ];
+
+      // Run tests
+      testCases.forEach(({ description, expected }, index) => {
+        const result = window.extractRouteLinks(description);
+        console.log(`Test Case ${index + 1}:`, result);
+
+        if (JSON.stringify(result) !== JSON.stringify(expected)) {
+          console.error(
+            `Test Case ${index + 1} Failed:\nExpected: ${JSON.stringify(
+              expected,
+              null,
+              2
+            )}\nGot: ${JSON.stringify(result, null, 2)}`
+          );
+        } else {
+          console.log(`Test Case ${index + 1} Passed`);
+        }
+      });
+
+      console.log("All tests completed.");
+    </script>
+  </body>
+</html>

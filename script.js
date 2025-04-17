@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   recurExpansion.last.toJSDate().getTime() +
                   (event.endDate.toJSDate().getTime() - event.startDate.toJSDate().getTime())
                 ),
-                routeLink: (event.description || "").match(/https?:\/\/ridewithgps\.com\/[^"'<\s]*/i)?.[0] || null,
               });
             }
           }
@@ -61,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 location: event.location,
                 startDate: event.startDate.toJSDate(),
                 endDate: event.endDate.toJSDate(),
-                routeLink: (event.description || "").match(/https?:\/\/ridewithgps\.com\/[^"'<\s]*/i)?.[0] || null,
               },
             ];
           }
@@ -173,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
             timeZone: "America/New_York",
           });
           const description = event.summary || "-";
-          const routeLink = event.routeLink;
+          //const routeLink = event.routeLink;
 
           const row = document.createElement("tr");
 
@@ -189,32 +187,56 @@ document.addEventListener("DOMContentLoaded", function () {
           timeCell.className = "time";
           timeCell.textContent = eventTime;
           row.appendChild(timeCell);
-
+          let routeLinks = [];
           // Event cell
           const descCell = document.createElement("td");
           descCell.className = "desc";
           descCell.textContent = description;
           if (event.description) {
             let descDiv = document.createElement("div");
-            descDiv.innerHTML = event.description;
+            if (event.description.includes('<br') || event.description.includes('</')) {
+              // We are HTML...              
+              descDiv.innerHTML = event.description;
+            } else {
+              // We are plain text...            
+              descDiv.innerHTML = event.description.replace(/\n/g, '<br>');
+            }
             descDiv.classList.add("detail");
             descCell.appendChild(descDiv);
+            descDiv.addEventListener("click", (e) => {
+              e.stopPropagation();
+            });
+            routeLinks = window.extractRouteLinks(event.description);
+            if (routeLinks.length) {
+              console.log(
+                {
+                  'description': event.description,
+                  'extracted route links': routeLinks,
+                  'text content': descDiv.textContent,
+                  'html content': descDiv.innerHTML
+                }
+
+              )
+            }
           }
           row.appendChild(descCell);
 
           // Route cell
-          // Route cell
           const routeCell = document.createElement("td");
           routeCell.className = "route";
 
-          if (routeLink) {
-            const link = document.createElement("a");
-            link.href = routeLink;
-            link.target = "_blank";
-            link.textContent = "Route";
-            link.className = "route-link"; // Add a class for styling
-            link.setAttribute("data-tooltip", "View route on Ride with GPS"); // Add tooltip text
-            routeCell.appendChild(link);
+
+
+          if (routeLinks.length) {
+            for (let routeLink of routeLinks) {
+              const link = document.createElement("a");
+              link.href = routeLink.link;
+              link.target = "_blank";
+              link.textContent = routeLink.title;
+              link.className = "route-link"; // Add a class for styling
+              link.setAttribute("data-tooltip", "View route on Ride with GPS"); // Add tooltip text
+              routeCell.appendChild(link);
+            }
           } else {
             routeCell.textContent = "-";
           }
