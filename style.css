@@ -216,14 +216,28 @@ tr.loading td {
   z-index: 100;
 }
 
-/* Show the tooltip text on hover or focus */
+/* Modify your tooltip CSS to use this approach */
+[data-tooltip]::after,
+[data-tooltip]::before {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+/* Show the tooltip only on hover */
 [data-tooltip]:hover::after,
-[data-tooltip]:hover::before,
-[data-tooltip]:focus::after,
-[data-tooltip]:focus::before {
+[data-tooltip]:hover::before {
   opacity: 1;
   visibility: visible;
 }
+
+/* For keyboard users, show tooltip on focus only if it wasn't just clicked */
+/* [data-tooltip]:focus:not(:active)::after,
+[data-tooltip]:focus:not(:active)::before {
+  opacity: 1;
+  visibility: visible;
+} */
 
 .route a {
   display: block;
