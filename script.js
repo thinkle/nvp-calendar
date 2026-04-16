@@ -30,8 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
           while (recurExpansion.next()) {
             const occurrenceDate = recurExpansion.last.toJSDate().getTime();
 
+            // Stop once we've passed the upper bound — avoids infinite loops on open-ended recurrences
+            if (occurrenceDate > stopRecurringAfter) break;
+
             // Only include occurrences within the specified window
-            if (occurrenceDate >= stopRecurringBefore && occurrenceDate <= stopRecurringAfter) {
+            if (occurrenceDate >= stopRecurringBefore) {
               occurrences.push({
                 summary: event.summary,
                 description: event.description || "",
