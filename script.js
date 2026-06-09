@@ -15,54 +15,64 @@ document.addEventListener("DOMContentLoaded", function () {
       let stopRecurringAfter = today.getTime() + 120 * 24 * 60 * 60 * 1000; // 120 days from now
       let stopRecurringBefore = today.getTime() - 120 * 24 * 60 * 60 * 1000; // 120 days before now
 
-      // Extract and process event details
-      let events = vevents.flatMap((vevent) => {
+      // Group VEVENTs by UID so we can attach exceptions to their master event.
+      // In iCal, a modified/cancelled occurrence of a recurring series is represented
+      // as a separate VEVENT with the same UID but a RECURRENCE-ID property.
+      const byUID = {};
+      vevents.forEach((vevent) => {
         const event = new ICAL.Event(vevent);
+        const uid = event.uid;
+        if (!byUID[uid]) byUID[uid] = { master: null, exceptions: [] };
+        if (vevent.hasProperty("recurrence-id")) {
+          byUID[uid].exceptions.push(event);
+        } else {
+          byUID[uid].master = event;
+        }
+      });
 
-        if (event.isRecurring()) {
-          // Handle recurring events
-          const recurExpansion = new ICAL.RecurExpansion({
-            component: vevent,
-            dtstart: event.startDate,
-          });
+      function eventToObj(item, startDate, endDate) {
+        return {
+          summary: item.summary,
+          description: item.description || "",
+          location: item.location,
+          startDate: startDate.toJSDate(),
+          endDate: endDate.toJSDate(),
+        };
+      }
 
+      // Extract and process event details
+      let events = Object.values(byUID).flatMap(({ master, exceptions }) => {
+        if (!master) {
+          // Orphaned exceptions with no master — treat each as a standalone event
+          return exceptions
+            .filter((e) => e.status !== "CANCELLED")
+            .map((e) => eventToObj(e, e.startDate, e.endDate));
+        }
+
+        // Attach exceptions so getOccurrenceDetails() returns modified data
+        exceptions.forEach((exc) => master.relateException(exc));
+
+        if (master.isRecurring()) {
+          const iterator = master.iterator();
           const occurrences = [];
-          while (recurExpansion.next()) {
-            const occurrenceDate = recurExpansion.last.toJSDate().getTime();
-
-            // Stop once we've passed the upper bound — avoids infinite loops on open-ended recurrences
+          let next;
+          while ((next = iterator.next())) {
+            const occurrenceDate = next.toJSDate().getTime();
             if (occurrenceDate > stopRecurringAfter) break;
-
-            // Only include occurrences within the specified window
             if (occurrenceDate >= stopRecurringBefore) {
-              occurrences.push({
-                summary: event.summary,
-                description: event.description || "",
-                location: event.location,
-                startDate: recurExpansion.last.toJSDate(),
-                endDate: new Date(
-                  recurExpansion.last.toJSDate().getTime() +
-                  (event.endDate.toJSDate().getTime() - event.startDate.toJSDate().getTime())
-                ),
-              });
+              const details = master.getOccurrenceDetails(next);
+              const status = details.item.component.getFirstPropertyValue("status");
+              if (status === "CANCELLED") continue;
+              occurrences.push(
+                eventToObj(details.item, details.startDate, details.endDate)
+              );
             }
           }
-
           return occurrences;
         } else {
-          // Handle non-recurring events
-
-          return [
-            {
-              summary: event.summary,
-              description: event.description || "",
-              location: event.location,
-              startDate: event.startDate.toJSDate(),
-              endDate: event.endDate.toJSDate(),
-            },
-          ];
-
-
+          const status = master.component.getFirstPropertyValue("status");
+          if (status === "CANCELLED") return [];
+          return [eventToObj(master, master.startDate, master.endDate)];
         }
       });
 
